@@ -74,8 +74,14 @@
     NSInteger menuHeight = cellSize * numberOfRows;
     NSInteger menuWidth = frame.size.width - padding;
     NSInteger menuX = frame.origin.x + padding / 2;
-    NSInteger menuY = [view.superview isKindOfClass:[UITabBar class]] ?
-                            view.superview.frame.origin.y : frame.origin.y;
+    
+    // HOTFIX: change view to UINavigationBar or UITabBar if needed
+    if ([view.superview isKindOfClass:[UINavigationBar class]] || [view.superview isKindOfClass:[UITabBar class]]) {
+        view = view.superview;
+        frame = view.frame;
+    }
+    
+    NSInteger menuY = frame.origin.y;
     
     if (self.direction == MLPopupMenuUp) {
         self.frame = CGRectMake(menuX,
@@ -90,15 +96,7 @@
     }
     if (![self isPopped]){
         //Insert menu below superview
-        if ([view.superview isKindOfClass:[UINavigationBar class]]) {
-            UINavigationBar *navBar = (UINavigationBar*)view.superview;
-            [navBar.superview insertSubview:self belowSubview:navBar];
-        }else if([view.superview isKindOfClass:[UITabBar class]]){
-            UITabBar *navBar = (UITabBar*)view.superview;
-            [navBar.superview insertSubview:self belowSubview:navBar];
-        }else{
-            [view.superview insertSubview:self belowSubview:view];
-        }
+        [view.superview insertSubview:self belowSubview:view];
     }
     
     //Animate popup
